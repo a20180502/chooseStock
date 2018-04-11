@@ -68,7 +68,7 @@ class createTrainData():
         self.initdf = pd.DataFrame()
 
 
-    # 融合文件，将制定文件按照key进行融合
+    # 融合文件，将文件按照key进行合并
     def mergeData(self):
         # 获取初始化
         if not self._getInitData():

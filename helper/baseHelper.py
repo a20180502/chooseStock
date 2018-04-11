@@ -4,6 +4,7 @@ import logging
 import calendar as cale
 import time
 import pandas as pd
+import tushare as ts
 from datetime import datetime,timedelta
 
 
@@ -28,9 +29,6 @@ class configHelper():
         # self.basepath = self.conf.get('FILE_PATH', 'basepath')
         # self.tradeDaysFN = self.basepath + self.conf.get('FILE_NAME', 'tradeDaysFN')
         return self.conf.get(section, option)
-
-
-
 
 """
     日志帮助类
@@ -135,8 +133,8 @@ class tradeDayHelper(object):
     #       year：年
     # 出参：
     #       yyyy-MM-dd
-    def getLastDayOnQuarter(year):
-        return getLastDayOnMonths(year, [3, 6, 9, 12])
+    def getLastDayOnQuarter(self,year):
+        return self.getLastDayOnMonths(year, [3, 6, 9, 12])
 
     # df = getAllTreadeDay('')
     # isTradeDay('',df)
@@ -184,7 +182,7 @@ class tradeDayHelper(object):
     #       date:操作日期   tradeDays：交易日
     def getNearTradeDay(self, date, num = -1):
         if not self.isTradeDay(date):
-            date = operateDay(date, num)
+            date = self.operateDay(date, num)
             return self.getNearTradeDay(date, self.tradeDays)
         else:
             return date
@@ -195,7 +193,7 @@ class tradeDayHelper(object):
     # 出参：
     #   月份最后一个交易日(list)
     def getLastTradeDay(self, year, months):
-        lastDays = getLastDayOnMonths(year, months)
+        lastDays = self.getLastDayOnMonths(year, months)
         lastTradeDays = []
         # tradeDays = getAllTreadeDay('tradeDay.csv')
         # for lastDay in lastDays:
