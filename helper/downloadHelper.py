@@ -132,10 +132,13 @@ class downloadDataHelper():
         df = self.sqlhelper.getDataBySQL(sqlStr)
         self._tocsv_(df,fileName)
 
+    def getDataBySQL(self,sqlStr):
+        return  self.sqlhelper.getDataBySQL(sqlStr)
+
 
 
 #
 # mySqlHelper = MySqlHelper()
 # mySqlHelper.saveTable2File("SecuMain")
-helper = downloadDataHelper()
-helper.downloadDataBySQL("select InnerCode,CompanyCode,SecuCode from SecuMain","SecuMainSQL")
+# helper = downloadDataHelper()
+# print(helper.getDataBySQL("select InnerCode,CompanyCode,SecuCode from SecuMain").describe())

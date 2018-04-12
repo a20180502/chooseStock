@@ -177,12 +177,14 @@ C:处理单个特征：
 #5：数据变换
 """
 class singleFuture():
-    #
+
+    # 标准化
     def standardScaler(self,df_X):
         StandardScaler().fit_transform(df_X)
 
-
-    def normalization(self,df):
+    # 归一化
+    def normalization(self,df_X):
+        MinMaxScaler().fit_transform(df_X)
         pass
 
 
