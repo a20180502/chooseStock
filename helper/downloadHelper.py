@@ -116,9 +116,10 @@ class downloadDataHelper():
 
     # 将DataFrame存入到文件
     def _tocsv_(self,df,fileName):
-        print("正在保存数据库表", downPath+'\\'+fileName + '.csv')
-        df.to_csv(downPath+'\\'+fileName + '.csv', encoding='gbk')
-        print("保存数据库表成功", downPath+'\\'+fileName + '.csv')
+        filePath = downPath+'\\'+fileName + '.csv'
+        print("正在保存数据库表", filePath)
+        df.to_csv(filePath, encoding='gbk')
+        print("保存数据库表成功", filePath)
 
     def download(self):
         downConfig = self._getDownDataInfo_()

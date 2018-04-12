@@ -166,8 +166,8 @@ class sampleData():
     pass
 
 
-
-import sklearn
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
 """
 C:处理单个特征：
 #1：归一化
@@ -178,6 +178,14 @@ C:处理单个特征：
 """
 class singleFuture():
     #
+    def standardScaler(self,df_X):
+        StandardScaler().fit_transform(df_X)
+
+
+    def normalization(self,df):
+        pass
+
+
 
     pass
 
