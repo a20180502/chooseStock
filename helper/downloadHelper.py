@@ -15,30 +15,17 @@ UserName = configHelper.getConfig("DataBaseInfo","UserName")
 Password = configHelper.getConfig("DataBaseInfo","Password")
 Port = configHelper.getConfig("DataBaseInfo","Port")
 downConfig = configHelper.getConfig("FILE_PATH","downConfig")
-
-
 """
-    Oracle帮助类
+    SQL基础帮助类
 """
-class oracleHelper():
-    def connect(self):
-        print("oracleHelper")
-        pass
+class sqlBaseHelper():
+    def _getConnect_(self):
+        raise NotImplementedError
 
-    def getDataByTable(self, table, columns):
-        print("正在读取数据库表", table)
-        df = pd.read_sql_table(table, self.engine, columns=columns)
-        print("读取数据库表完成", table)
-        return df
-    pass
-
-"""
-    MySQL帮助类
-"""
-class MySqlHelper():
-    def __init__(self,ip=IP,port = Port, userName=UserName,password=Password,database=DataBase):
+    def __init__(self, ip=IP, port=Port, userName=UserName, password=Password, database=DataBase):
         # self.connectInfo = pymysql.connect(ip,userName,password,database)
         # self.cursor = self.connectInfo.cursor()
+        self.engine = None
         self.ip = ip
         self.port = port
         self.userName = userName
@@ -46,40 +33,60 @@ class MySqlHelper():
         self.database = database
         self._getConnect_()
 
+    # 根据表名\字段名\日期范围\证券代码从数据库中获取数据
+    def getDataByTable(self, table, columns=None, dateRange=None, stockList=None):
+        print("正在读取数据库表", table, '字段', columns)
+        df = pd.read_sql_table(table, self.engine, columns=columns)
+        print("读取数据库表完成", table)
+        return df
+
+    # 根据SQL从数据库中获取数据
+    def getDataBySQL(self, sqlstr):
+        print("正在执行SQL,读取数据:", sqlstr)
+        df = pd.read_sql(sqlstr, self.engine)
+        print("执行SQL完毕,读取数据描述:")
+        print(df.describe())
+        return df
+
+
+"""
+    Oracle帮助类
+"""
+class oracleHelper(sqlBaseHelper):
+
+    # 需要更改为连接Oracle的连接串
+    def _getConnect_(self):
+        print("正在尝试连接数据库")
+        conInfo = 'mysql+pymysql://{}:{}@{}:{}/{}?charset=utf8'.format(self.userName, self.password, self.ip, self.port,
+                                                                       self.database)
+        self.engine = create_engine(conInfo)
+        print("数据库已经连接")
+    pass
+
+"""
+    MySQL帮助类
+"""
+class MySqlHelper(sqlBaseHelper):
     def _getConnect_(self):
         print("正在尝试连接数据库")
         conInfo = 'mysql+pymysql://{}:{}@{}:{}/{}?charset=utf8'.format(self.userName, self.password, self.ip,self.port,self.database)
         self.engine = create_engine(conInfo)
         print("数据库已经连接")
 
-    # 根据表名\字段名\日期范围\证券代码从数据库中获取数据
-    def getDataByTable(self,table,columns=None,dateRange=None,stockList=None):
-        print("正在读取数据库表", table,'字段',columns)
-        df = pd.read_sql_table(table,self.engine,columns=columns)
-        print("读取数据库表完成", table)
-        return df
 
-    # 根据SQL从数据库中获取数据
-    def getDataBySQL(self,sqlstr):
-        print("正在执行SQL,读取数据:", sqlstr)
-        df = pd.read_sql(sqlstr,self.engine)
-        print("执行SQL完毕,读取数据描述:")
-        print(df.describe())
-        return df
 
 """
     sqlServer帮助类
 """
-class sqlServerHelper():
-    def __init__(self):
-        pass
+class sqlServerHelper(sqlBaseHelper):
+    def _getConnect_(self):
+        print("正在尝试连接数据库")
+        conInfo = 'mysql+pymysql://{}:{}@{}:{}/{}?charset=utf8'.format(self.userName, self.password, self.ip, self.port,
+                                                                       self.database)
+        self.engine = create_engine(conInfo)
+        print("数据库已经连接")
 
-    def getDataByTable(self, table, columns):
-        print("正在读取数据库表", table)
-        df = pd.read_sql_table(table, self.engine, columns=columns)
-        print("读取数据库表完成", table)
-        return df
-    pass
+
 
 """
     文件下载帮助类
@@ -136,9 +143,7 @@ class downloadDataHelper():
         return  self.sqlhelper.getDataBySQL(sqlStr)
 
 
-
-#
 # mySqlHelper = MySqlHelper()
 # mySqlHelper.saveTable2File("SecuMain")
-# helper = downloadDataHelper()
-# print(helper.getDataBySQL("select InnerCode,CompanyCode,SecuCode from SecuMain").describe())
+helper = downloadDataHelper()
+print(helper.getDataBySQL("select InnerCode,CompanyCode,SecuCode from SecuMain").describe())
