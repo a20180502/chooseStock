@@ -61,10 +61,11 @@ class MySqlHelper():
 
     # 根据SQL从数据库中获取数据
     def getDataBySQL(self,sqlstr):
+        print("正在执行SQL,读取数据:", sqlstr)
         df = pd.read_sql(sqlstr,self.engine)
+        print("执行SQL完毕,读取数据描述:")
+        print(df.describe())
         return df
-
-    pass
 
 """
     sqlServer帮助类
@@ -121,11 +122,15 @@ class downloadDataHelper():
         df.to_csv(filePath, encoding='gbk')
         print("保存数据库表成功", filePath)
 
-    def download(self):
+    def downloadTables(self):
         downConfig = self._getDownDataInfo_()
         for key in downConfig.keys():
             self._saveTable2File_(table=key,columns=downConfig.get(key))
 
+    # 通过SQL进行下载数据
+    def downloadDataBySQL(self,sqlStr,fileName):
+        df = self.sqlhelper.getDataBySQL(sqlStr)
+        self._tocsv_(df,fileName)
 
 
 
@@ -133,4 +138,4 @@ class downloadDataHelper():
 # mySqlHelper = MySqlHelper()
 # mySqlHelper.saveTable2File("SecuMain")
 helper = downloadDataHelper()
-helper.download()
+helper.downloadDataBySQL("select InnerCode,CompanyCode,SecuCode from SecuMain","SecuMainSQL")
