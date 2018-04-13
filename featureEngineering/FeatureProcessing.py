@@ -11,8 +11,8 @@ A:特征清洗，主要功能是去除异常样本
 # 6. 样本在重要特征缺失情况如果比较多，则把这些行去掉
 # 7. 文本字符的处理（对于标称值，进行归类，比如大小写归并，同词义的不同的词汇归并，将有空格的去掉等；）
 # 8. 按业务逻辑完全不可解释的变量直接剔除
-# 5. 对缺失值的多维度处理
-# 6. 对离散点的处理
+# 9. 对缺失值的多维度处理
+# 10. 对离散点的处理
 """
 class cleanFeatures():
 
@@ -129,10 +129,7 @@ class cleanFeatures():
         df.drop(drop_idx, axis=0, inplace=True)
         self.recordDataInfo("[去除缺失率高的重要特征]操作之后：shape{}".format(df.shape))
 
-
-
     def cleanData(self,df):
-
         self.dropByColumn(df)
         self.dropNan(df)
         self.drop_missing_features(df)
