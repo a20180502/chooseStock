@@ -2,6 +2,7 @@ from dataCollection.downloadData import downloader
 from helper.baseHelper import configHelper
 from dataCollection.initTrainData import createTrainData
 from featureEngineering.FeatureProcessing import cleanFeatures
+from dataCollection.downloadLabel import downloadLabel
 
 import pandas as pd
 """
@@ -37,6 +38,11 @@ CompanyCode = configHelper.getConfig("DATA", "CompanyCode")
 StockCode = configHelper.getConfig("DATA", "StockCode")
 delColumns = configHelper.getConfig("DATA", "delColumns").split(',')
 
+# 下载标签
+timeBeg = configHelper.getConfig("DATAConfig", "timeBeg")
+timeEnd = configHelper.getConfig("DATAConfig", "timeEnd")
+
+
 
 
 
@@ -52,8 +58,11 @@ if 1 in flow:
 
 """ 
     2 下载标签数据
+    证券内码 filepath begindate
 """
-
+stocksList=""
+downloadLabel = downloadLabel(ip=IP, port=Port, userName=UserName, password=Password, database=DataBase, downPath=DownPath, type='mysql')
+# downloadLabel.download_label(filepath=initFile,secucodes=stocksList,secucategory, begindate=timeBeg, enddate=timeEnd, timemod=, labelkinds=[[-999, -15, 'A'],[-15, 0, 'B'],[0, 15, 'C'],[15, 999, 'D']], secumarket=)
 
 """
     3 数据的合并,将下载过来的数据,合并成一个文件
