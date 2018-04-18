@@ -1,15 +1,16 @@
-from dataCollection.downloadData import downloader
+from dataCollection.downloadData import downloadTables
 from helper.baseHelper import configHelper
 from dataCollection.initTrainData import createTrainData
 from featureEngineering.FeatureProcessing import cleanFeatures
-from dataCollection.downloadLabel import downloadLabel
-
+from dataCollection.downloadStockLabel import downloadStockLabel
+from dataCollection.downloadStockPool import downloadStockPool
+from helper.downloadHelper import downloadDataHelper
 import pandas as pd
 """
     程序的主路线(中间件),进行该系统所有的流程控制
     按照流程进行调用类库,依次执行
 """
-flow = [3,4,5]
+flow = []
 """ 
     0 初始化,进行配置文件的加载
 """
@@ -27,8 +28,8 @@ Port = configHelper.getConfig("DataBaseInfo","Port")
 DownPath = configHelper.getConfig("FILE_PATH","downloadPath")
 # 需要下载表名字段名的配置文件路径
 downConfig = configHelper.getConfig("FILE_PATH","downConfig")
-# 初始化文件路径
-initFile = configHelper.getConfig("FILE_PATH", "initFile")
+# 股票池文件路径
+stockPool = configHelper.getConfig("FILE_PATH", "stockPool")
 # 训练文件路径
 trainFile = configHelper.getConfig("FILE_PATH", "trainFile")
 
@@ -39,30 +40,37 @@ StockCode = configHelper.getConfig("DATA", "StockCode")
 delColumns = configHelper.getConfig("DATA", "delColumns").split(',')
 
 # 下载标签
-timeBeg = configHelper.getConfig("DATAConfig", "timeBeg")
-timeEnd = configHelper.getConfig("DATAConfig", "timeEnd")
+beginDate = configHelper.getConfig("DATAConfig", "timeBeg")
+endDate = configHelper.getConfig("DATAConfig", "timeEnd")
 
 
-
+# 声明下载器(所有连接数据库下载数据所需要的帮助类)
+downloadDataHelper = downloadDataHelper(ip=IP, port=Port, userName=UserName, password=Password, database=DataBase, downPath=DownPath, type='mysql')
 
 
 """ 
-    1 根据数据信息配置,进行数据的下载,并且保存到指定文件中
+    1 根据配置信息,根据相应条件进行下载股票池信息
+"""
+downloadStockMessage = downloadStockPool(downloadDataHelper)
+# downloadStockMessage.savestockpool(Id=1,Name='test1',Market='83',Type='1',Industry='',Plate='',Hasst='0',Savepath='SH_stocks.csv',Isused='1',filepath=r'C:\Users\zhangcf17306\Desktop\stockPool.csv')
+#secumarket(83:SH,90:SZ) secucategory(1:A) isst(0:不含ST,1:包含)
+downloadStockMessage.downlaod_stocks(secumarket='83', secucategory=1, isst=0 ,filename='SH_stocks')
+
+""" 
+    2 根据配置信息,根据条件将股票池中标记分类
+"""
+downloadLabel = downloadStockLabel(downloadDataHelper)
+downloadLabel.download(stockpoolpath=r'C:\Users\zhangcf17306\Desktop\stockPool.csv', downloadfilepath=DownPath,labelkinds='', begindate=beginDate, enddate=endDate, labelfilename='SH_stocksLeable', timemod='quarter')
+
+""" 
+    3 根据数据(信息配置),进行数据的下载,并且保存到指定文件中
 """
 if 1 in flow:
     # 加载配置文件,获取数据库连接信息\下载文件路径\表信息
-    downloader = downloader(ip=IP, port=Port, userName=UserName, password=Password, database=DataBase, downPath=DownPath, type='mysql')
-    downloader.down(downConfig)
+    downloader = downloadTables(downloadDataHelper)
+    downloader.download(downConfig)
 
 
-
-""" 
-    2 下载标签数据
-    证券内码 filepath begindate
-"""
-stocksList=""
-downloadLabel = downloadLabel(ip=IP, port=Port, userName=UserName, password=Password, database=DataBase, downPath=DownPath, type='mysql')
-# downloadLabel.download_label(filepath=initFile,secucodes=stocksList,secucategory, begindate=timeBeg, enddate=timeEnd, timemod=, labelkinds=[[-999, -15, 'A'],[-15, 0, 'B'],[0, 15, 'C'],[15, 999, 'D']], secumarket=)
 
 """
     3 数据的合并,将下载过来的数据,合并成一个文件

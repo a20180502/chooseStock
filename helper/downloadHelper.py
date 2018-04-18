@@ -28,7 +28,7 @@ class sqlBaseHelper():
         self._getConnect_()
 
     # 根据表名\字段名\日期范围\证券代码从数据库中获取数据
-    def getDataByTable(self, table, columns=None, dateRange=None, stockList=None):
+    def getDataByTable(self, table, columns=None, where = None):
         print("正在读取数据库表", table, '字段', columns)
         df = pd.read_sql_table(table, self.engine, columns=columns)
         print("读取数据库表完成", table)
@@ -41,6 +41,10 @@ class sqlBaseHelper():
         print("执行SQL完毕,读取数据描述:")
         print(df.describe())
         return df
+
+    def getData(self,table,columns='*',where='1=1'):
+        sqlStr = "select {} from {} where {}".format(columns,table,where)
+        self.getDataBySQL(sqlStr)
 
 
 """

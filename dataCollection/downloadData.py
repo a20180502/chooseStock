@@ -1,15 +1,15 @@
-from helper.downloadHelper import downloadDataHelper
 import pandas as pd
+import numpy as np
 
 """
     下载器功能:连接数据库,根据配置文件从数据库获取数据,并且保存到本地
 """
-class downloader():
+class downloadTables():
 
     # 初始化下载器
     # 入参:数据库连接信息
-    def __init__(self,ip, port, userName, password,database,downPath,type):
-        self.downloadHelper = downloadDataHelper(ip, port, userName, password, database, downPath, type)
+    def __init__(self,downloadDataHelper):
+        self.downloadHelper = downloadDataHelper
 
     # 从配置文件中,获取下载的数据信息,
     # 入参:
@@ -32,6 +32,21 @@ class downloader():
 
     # 下载文件,根据配置文件,进行下载指定表和字段
     # 入参:配置文件路径
-    def down(self,downConfig):
+    def download(self,downConfig):
         downConfig = self.getDownDataInfo(downConfig)
         self.downloadHelper.downloadTables(downConfig)
+
+
+    def getInfo(self,df):
+        listInfo = np.array(df[['InnerCode','CompanyCode']]).tolist()
+        InnerCodes = list()
+        CompanyCodes = list()
+        for info in listInfo:
+            InnerCodes.append(info[0])
+            CompanyCodes.append(info[1])
+
+        return ','.join(InnerCodes),','.join(CompanyCodes)
+
+
+
+        pass
