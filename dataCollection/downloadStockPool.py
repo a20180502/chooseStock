@@ -84,7 +84,7 @@ class downloadStockPool():
         if isst == 0:
             sqlstr = "select sm.InnerCode,sm.SecuCode,SecuAbbr,sm.SecuCategory,sm.SecuMarket,sm.CompanyCode,sm.ChiName,sm.ChiNameAbbr \
                      from SecuMain sm where sm.SecuCategory = {} and sm.SecuMarket = {} and  \
-                     sm.SecuAbbr not like '\%%st\%%' " \
+                     INSTR(sm.SecuAbbr,'st')<=0 "\
                      .format(secucategory, secumarket)
             #print(sqlstr)
         else:
@@ -93,4 +93,4 @@ class downloadStockPool():
                      % (secucategory, secumarket)
             #print(sqlstr)
 
-        self.ssh.downloadDataBySQL(sqlstr, filename)
+        return self.ssh.downloadDataBySQL(sqlstr, filename)

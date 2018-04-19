@@ -122,6 +122,7 @@ class downloadDataHelper():
     def downloadDataBySQL(self,sqlStr,fileName):
         df = self.sqlhelper.getDataBySQL(sqlStr)
         self._tocsv_(df,fileName)
+        return df
 
     # 通过SQL获取DataFrame结果集
     def getDataBySQL(self,sqlStr):
